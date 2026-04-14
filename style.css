@@ -209,8 +209,9 @@ button:active {
 .site-footer {
     position: absolute;
     bottom: 20px;
+    left: 0;
     font-size: 12px;
-    color: var(--text-secondary);
+    color: #4a4d61;
     text-align: center;
     width: 100%;
 }
