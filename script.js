@@ -4,12 +4,18 @@ const successModal = document.getElementById('success-modal');
 const restartBtn = document.getElementById('restart-btn');
 const container = document.querySelector('.captcha-container');
 const scoreVal = document.getElementById('score-val');
+const timerVal = document.getElementById('timer-val');
+const finalTimeDisplay = document.getElementById('final-time');
 const difficultySelect = document.getElementById('difficulty-select');
 const captchaIdText = document.getElementById('captcha-id-text');
 
 let GRID_SIZE = parseInt(difficultySelect.value);
 let TOTAL_TILES = GRID_SIZE * GRID_SIZE;
 let currentScore = 0;
+
+let timerInterval;
+let startTime;
+let isTimerRunning = false;
 
 // Store the current rotation of each tile (in degrees)
 let tileRotations = [];
@@ -41,6 +47,11 @@ function initGame() {
     GRID_SIZE = parseInt(difficultySelect.value);
     TOTAL_TILES = GRID_SIZE * GRID_SIZE;
     document.documentElement.style.setProperty('--grid-size', GRID_SIZE);
+
+    // Reset Timer State
+    clearInterval(timerInterval);
+    isTimerRunning = false;
+    timerVal.innerText = '0.0';
 
     gridElement.innerHTML = '';
     tileRotations = [];
@@ -107,6 +118,15 @@ function initGame() {
 }
 
 function rotateTile(index, tileElement) {
+    if (!isTimerRunning) {
+        startTime = Date.now();
+        isTimerRunning = true;
+        timerInterval = setInterval(() => {
+            const current = (Date.now() - startTime) / 1000;
+            timerVal.innerText = current.toFixed(1);
+        }, 100);
+    }
+    
     // Add 90 degrees
     tileRotations[index] += 90;
     tileElement.style.transform = `rotate(${tileRotations[index]}deg)`;
@@ -117,8 +137,13 @@ function checkWin() {
     const isWin = tileRotations.every(rotation => rotation % 360 === 0);
     
     if (isWin) {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+        const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+        
         currentScore++;
         scoreVal.innerText = currentScore;
+        finalTimeDisplay.innerText = `Vyřešeno za: ${totalTime}s`;
         successModal.classList.remove('hidden');
     } else {
         // Shake animation

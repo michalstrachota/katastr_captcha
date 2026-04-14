@@ -14,6 +14,7 @@
             <div class="controls-bar">
                 <span class="captcha-id" id="captcha-id-text">a715e6e17f7c2dba</span>
                 <div class="game-settings">
+                    <span class="score-display timer-display">Čas: <span id="timer-val">0.0</span>s</span>
                     <span class="score-display">Skóre: <span id="score-val">0</span></span>
                     <select id="difficulty-select">
                         <option value="3">3x3 (Lehká)</option>
@@ -37,6 +38,7 @@
         <div class="modal-content">
             <h2>Úspěch!</h2>
             <p>Jste člověk.</p>
+            <p id="final-time" style="font-weight: bold; margin-bottom: 24px; color: #fb923c;"></p>
             <button id="restart-btn">Hrát znovu</button>
         </div>
     </div>

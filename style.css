@@ -72,6 +72,11 @@ body {
     color: #4ade80;
 }
 
+.timer-display {
+    color: #fb923c;
+    min-width: 75px; 
+}
+
 #difficulty-select {
     background-color: var(--bg-color);
     color: var(--text-primary);
