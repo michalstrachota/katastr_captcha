@@ -20,7 +20,7 @@ let isTimerRunning = false;
 // Store the current rotation of each tile (in degrees)
 let tileRotations = [];
 
-// Good lively city locations to avoid the ocean
+// Known good locations - avoiding oceans and deserts
 const CITIES = [
     { name: 'Prague', lat: 50.0755, lon: 14.4378 },
     { name: 'Paris', lat: 48.8566, lon: 2.3522 },
@@ -59,8 +59,8 @@ function initGame() {
     // Generate new random captcha ID
     captchaIdText.innerText = Array.from({length: 16}, () => Math.floor(Math.random() * 16).toString(16)).join('');
     
-    // Zoom level 15 ensures we get distinct roads/features.
-    const z = 15;
+    // Randomize zoom level between 14 and 16
+    const z = Math.floor(Math.random() * 3) + 14;
     
     // Pick a random city
     const city = CITIES[Math.floor(Math.random() * CITIES.length)];

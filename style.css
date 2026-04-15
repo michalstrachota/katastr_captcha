@@ -22,15 +22,17 @@ body {
     background-color: var(--bg-color);
     color: var(--text-primary);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    padding: 20px;
 }
 
 .captcha-container {
     background-color: var(--container-bg);
-    width: 400px;
-    max-width: 95vw;
+    width: calc(130px * var(--grid-size));
+    max-width: 100%;
     border-radius: var(--border-radius);
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -212,11 +214,31 @@ button:active {
 }
 
 .site-footer {
-    position: absolute;
-    bottom: 20px;
-    left: 0;
+    margin-top: 24px;
     font-size: 12px;
     color: #4a4d61;
     text-align: center;
     width: 100%;
+}
+
+/* Responsive scaling */
+/* Fix for footer getting in the way of the game */
+@media (max-width: 450px), (max-height: 700px) {
+    .captcha-container {
+        width: 320px;
+    }
+    .header { padding: 15px; }
+    .header h2 { font-size: 14px; margin-bottom: 15px; }
+    .game-settings { gap: 8px; flex-direction: column; align-items: stretch;}
+    .controls-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .footer { padding: 15px; }
+    button { padding: 8px 30px; font-size: 14px; }
+}
+
+@media (max-height: 550px) {
+    .captcha-container {
+        width: 250px;
+    }
+    .header { padding: 10px; }
+    .footer { padding: 10px; }
 }
