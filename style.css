@@ -31,8 +31,9 @@ body {
 
 .captcha-container {
     background-color: var(--container-bg);
-    width: calc(130px * var(--grid-size));
-    max-width: 100%;
+    width: 100%;
+    /* Strict fallback maximum bounds */
+    max-width: min(550px, calc(100vh - 260px));
     border-radius: var(--border-radius);
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -40,47 +41,40 @@ body {
     flex-direction: column;
 }
 
-.header {
-    padding: 20px;
-}
-
-.header h2 {
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 1.4;
-    margin-bottom: 15px;
-}
-
-.controls-bar {
+.app-header-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    /* keep button aligned vertically with text */
+    margin-bottom: 16px;
+    padding: 20px 20px 0 20px;
 }
 
-.captcha-id {
-    font-size: 12px;
+.app-header-top h2 {
+    margin: 0;
+    font-size: 14px;
     color: var(--text-secondary);
+    max-width: 80%;
+    line-height: 1.4;
+    font-weight: 500;
 }
 
-.game-settings {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.header {
+    padding: 0 20px 16px 20px;
 }
 
 .score-display {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
-    color: #4ade80;
+    color: var(--text-primary);
 }
 
-.timer-display {
+.score-display.timer-display {
     color: #fb923c;
-    min-width: 75px; 
 }
 
 #difficulty-select {
-    background-color: var(--bg-color);
+    background-color: #1e1f2c;
     color: var(--text-primary);
     border: 1px solid #333;
     border-radius: 4px;
@@ -95,7 +89,8 @@ body {
     grid-template-columns: repeat(var(--grid-size), 1fr);
     grid-template-rows: repeat(var(--grid-size), 1fr);
     gap: var(--grid-gap);
-    background-color: var(--bg-color); /* The gaps will show the background color */
+    background-color: var(--bg-color);
+    /* The gaps will show the background color */
     padding: 0;
     aspect-ratio: 1 / 1;
 }
@@ -125,7 +120,10 @@ body {
 .tile::after {
     content: '';
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     opacity: 0.25;
@@ -152,6 +150,32 @@ button {
     transition: background-color 0.2s, transform 0.1s;
 }
 
+.icon-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+
+.secondary-btn {
+    background-color: transparent;
+    border: 1px solid var(--text-secondary);
+    color: var(--text-primary);
+    padding: 4px 12px;
+}
+
 button:hover {
     background-color: var(--accent-hover);
 }
@@ -163,7 +187,10 @@ button:active {
 /* Modal styles */
 .modal {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
@@ -194,7 +221,8 @@ button:active {
 
 .modal-content h2 {
     margin-bottom: 10px;
-    color: #4ade80; /* success green */
+    color: #4ade80;
+    /* success green */
 }
 
 .modal-content p {
@@ -202,15 +230,123 @@ button:active {
     margin-bottom: 24px;
 }
 
+/* Leaderboard List */
+.controls-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.game-settings {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+    background: #1e1f2c;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stats-group {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.pb-text {
+    font-size: 10px;
+}
+
+.leaderboard-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.leaderboard-name {
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.leaderboard-score {
+    color: #4ade80;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.leaderboard-detail {
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
 /* Error/Shake Animation */
 @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-    20%, 40%, 60%, 80% { transform: translateX(5px); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(5px);
+    }
 }
 
 .shake {
-    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+/* Custom Text Inputs */
+input[type="text"] {
+    background-color: var(--container-bg);
+    border: 1px solid #333;
+    color: var(--text-primary);
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    width: 60%;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input[type="text"]:focus {
+    border-color: var(--accent-color);
+}
+
+.tab-btn {
+    background: transparent;
+    border: 1px solid #333;
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    transition: all 0.2s;
+    flex: 1;
+}
+
+.tab-btn.active {
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
 }
 
 .site-footer {
@@ -223,22 +359,205 @@ button:active {
 
 /* Responsive scaling */
 /* Fix for footer getting in the way of the game */
-@media (max-width: 450px), (max-height: 700px) {
-    .captcha-container {
-        width: 320px;
+@media (max-width: 480px),
+(max-height: 700px) {
+    .app-header-top {
+        padding: 15px 15px 4px 15px;
     }
-    .header { padding: 15px; }
-    .header h2 { font-size: 14px; margin-bottom: 15px; }
-    .game-settings { gap: 8px; flex-direction: column; align-items: stretch;}
-    .controls-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
-    .footer { padding: 15px; }
-    button { padding: 8px 30px; font-size: 14px; }
+
+    .header {
+        padding: 0 15px 15px 15px;
+    }
+
+    .footer {
+        padding: 15px;
+    }
+
+    button {
+        padding: 8px 30px;
+        font-size: 14px;
+    }
+
+    /* Ensure the dashboard forces inline icons on mobile */
+    .game-settings {
+        padding: 6px 8px !important;
+    }
+
+    .stats-group {
+        gap: 8px !important;
+    }
+
+    .score-display {
+        font-size: 12px;
+    }
+
+    #difficulty-select {
+        font-size: 11px;
+        padding: 2px 4px;
+    }
 }
 
 @media (max-height: 550px) {
     .captcha-container {
         width: 250px;
     }
-    .header { padding: 10px; }
-    .footer { padding: 10px; }
+
+    .header {
+        padding: 10px;
+    }
+
+    .footer {
+        padding: 10px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .captcha-container {
+        max-width: min(700px, calc(100vh - 300px));
+    }
+
+    .app-header-top h2 {
+        font-size: 16px;
+    }
+
+    .icon-btn {
+        font-size: 22px;
+        padding: 10px 14px;
+    }
+
+    .score-display {
+        font-size: 15px;
+    }
+
+    .score-display.timer-display {
+        font-size: 18px !important;
+    }
+
+    .pb-text {
+        font-size: 12px;
+    }
+
+    #difficulty-select {
+        font-size: 14px;
+        padding: 6px 10px;
+    }
+
+    button {
+        font-size: 18px;
+        padding: 12px 60px;
+    }
+
+    .stats-group {
+        gap: 24px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .captcha-container {
+        max-width: min(850px, calc(100vh - 360px));
+    }
+
+    .app-header-top {
+        justify-content: center;
+        gap: 40px;
+    }
+
+    .app-header-top h2 {
+        font-size: 18px;
+        text-align: center;
+        max-width: 100%;
+    }
+
+    .icon-btn {
+        font-size: 26px;
+        padding: 12px 18px;
+    }
+
+    .score-display {
+        font-size: 18px;
+    }
+
+    .score-display.timer-display {
+        font-size: 24px !important;
+    }
+
+    .pb-text {
+        font-size: 14px;
+    }
+
+    #difficulty-select {
+        font-size: 16px;
+        padding: 8px 14px;
+        margin-left: 30px;
+    }
+
+    button {
+        font-size: 20px;
+        padding: 16px 80px;
+    }
+
+    .game-settings {
+        justify-content: center;
+        padding: 14px 20px;
+        gap: 20px;
+    }
+
+    .stats-group {
+        justify-content: center;
+        gap: 40px;
+    }
+}
+
+/* 
+ * The Ultimate Safety Net 
+ * If the monitor is wide but extremely short (like a 1024x600 laptop), 
+ * we forcibly compress ALL padding to guarantee the Hotovo button never falls off-screen.
+ */
+@media (max-height: 750px) {
+    .captcha-container {
+        max-width: clamp(280px, calc(100vh - 250px), 500px) !important;
+    }
+
+    .app-header-top {
+        padding: 10px 15px 0 15px !important;
+        margin-bottom: 8px !important;
+        gap: 15px !important;
+    }
+
+    .app-header-top h2 {
+        font-size: 14px !important;
+    }
+
+    .icon-btn {
+        padding: 8px 12px !important;
+        font-size: 18px !important;
+    }
+
+    .header {
+        padding: 0 15px 10px 15px !important;
+    }
+
+    .game-settings {
+        padding: 6px 12px !important;
+        gap: 15px !important;
+    }
+
+    #difficulty-select {
+        padding: 4px 8px !important;
+        font-size: 13px !important;
+        margin-left: auto !important;
+    }
+
+    .score-display.timer-display {
+        font-size: 16px !important;
+    }
+
+    .footer {
+        padding: 10px 15px !important;
+    }
+
+    button {
+        padding: 10px 40px !important;
+        font-size: 16px !important;
+    }
 }
