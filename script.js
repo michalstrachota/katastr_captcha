@@ -41,18 +41,24 @@ let isTimerRunning = false;
 // Store the current rotation of each tile (in degrees)
 let tileRotations = [];
 
+// Currently active city (set during initGame, read during checkWin)
+let currentCity = null;
+
 // Known good locations - avoiding oceans and deserts
 const CITIES = [
-    { name: 'Prague', lat: 50.0755, lon: 14.4378 },
-    { name: 'Paris', lat: 48.8566, lon: 2.3522 },
-    { name: 'London', lat: 51.5074, lon: -0.1278 },
-    { name: 'Berlin', lat: 52.5200, lon: 13.4050 },
-    { name: 'Rome', lat: 41.9028, lon: 12.4964 },
-    { name: 'Vienna', lat: 48.2082, lon: 16.3738 },
+    { name: 'Praha', lat: 50.0755, lon: 14.4378 },
+    { name: 'Paříž', lat: 48.8566, lon: 2.3522 },
+    { name: 'Londýn', lat: 51.5074, lon: -0.1278 },
+    { name: 'Berlín', lat: 52.5200, lon: 13.4050 },
+    { name: 'Řím', lat: 41.9028, lon: 12.4964 },
+    { name: 'Vídeň', lat: 48.2082, lon: 16.3738 },
     { name: 'Madrid', lat: 40.4168, lon: -3.7038 },
     { name: 'Amsterdam', lat: 52.3676, lon: 4.9041 },
-    { name: 'Budapest', lat: 47.4979, lon: 19.0402 },
-    { name: 'Warsaw', lat: 52.2297, lon: 21.0122 }
+    { name: 'Budapešť', lat: 47.4979, lon: 19.0402 },
+    { name: 'Varšava', lat: 52.2297, lon: 21.0122 },
+    { name: 'Brno', lat: 49.1952, lon: 16.6068 },
+    { name: 'Ostrava', lat: 49.8347, lon: 18.2809 },
+    { name: 'Plzeň', lat: 49.7384, lon: 13.3736 }
 ];
 
 function lon2tile(lon, zoom) {
@@ -73,17 +79,17 @@ function initGame() {
     if (GRID_SIZE === 3) remainingLives = 3;
     else if (GRID_SIZE === 4) remainingLives = 4;
     else if (GRID_SIZE === 5) remainingLives = 8;
-    
+
     livesVal.innerText = remainingLives;
 
     // Load Local PB for this difficulty
     let best = localStorage.getItem(`captchaPB_${GRID_SIZE}`);
-    pbVal.innerText = best ? best : '--';
+    pbVal.innerText = best ? parseFloat(best).toFixed(2) : '--';
 
     // Reset Timer State
     clearInterval(timerInterval);
     isTimerRunning = false;
-    timerVal.innerText = '0.0';
+    timerVal.innerText = '0.00';
 
     gridElement.innerHTML = '';
     tileRotations = [];
@@ -92,13 +98,13 @@ function initGame() {
     const z = Math.floor(Math.random() * 3) + 14;
 
     // Pick a random city
-    const city = CITIES[Math.floor(Math.random() * CITIES.length)];
+    currentCity = CITIES[Math.floor(Math.random() * CITIES.length)];
 
     // Add a small random offset (-15 to +15 tiles) to the city center 
     // so we get different parts of the city each time
     const offsetRange = 15;
-    const startX = lon2tile(city.lon, z) + Math.floor(Math.random() * (offsetRange * 2)) - offsetRange;
-    const startY = lat2tile(city.lat, z) + Math.floor(Math.random() * (offsetRange * 2)) - offsetRange;
+    const startX = lon2tile(currentCity.lon, z) + Math.floor(Math.random() * (offsetRange * 2)) - offsetRange;
+    const startY = lat2tile(currentCity.lat, z) + Math.floor(Math.random() * (offsetRange * 2)) - offsetRange;
 
     for (let i = 0; i < TOTAL_TILES; i++) {
         // Generate random initial rotation: 0, 90, 180, or 270
@@ -152,8 +158,8 @@ function rotateTile(index, tileElement) {
         isTimerRunning = true;
         timerInterval = setInterval(() => {
             const current = (Date.now() - startTime) / 1000;
-            timerVal.innerText = current.toFixed(1);
-        }, 100);
+            timerVal.innerText = current.toFixed(2);
+        }, 30);
     }
 
     // Add 90 degrees
@@ -170,16 +176,17 @@ function checkWin() {
         isTimerRunning = false;
 
         // Calculate points based on speed and difficulty
-        const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+        const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
+        timerVal.innerText = totalTime;
         const earnedPoints = Math.round((TOTAL_TILES * 2000) / totalTime);
 
         // PB LocalStorage Update
         let currentPB = localStorage.getItem(`captchaPB_${GRID_SIZE}`);
         if (!currentPB || parseFloat(totalTime) < parseFloat(currentPB)) {
-             localStorage.setItem(`captchaPB_${GRID_SIZE}`, totalTime);
-             pbVal.innerText = totalTime;
-             pbVal.style.color = '#4ade80'; // visually signify a new PB
-             setTimeout(() => pbVal.style.color = '', 4000);
+            localStorage.setItem(`captchaPB_${GRID_SIZE}`, totalTime);
+            pbVal.innerText = totalTime;
+            pbVal.style.color = '#4ade80'; // visually signify a new PB
+            setTimeout(() => pbVal.style.color = '', 4000);
         }
 
         globalScore += earnedPoints;
@@ -240,23 +247,24 @@ function checkWin() {
 
         finalTimeDisplay.innerText = `Vyřešeno za: ${totalTime}s`;
         earnedPointsDisplay.innerText = `Získáno: +${earnedPoints} Bodů`;
+        document.getElementById('city-reveal').innerText = currentCity ? `📍 Na mapě bylo/a: ${currentCity.name} nebo okolí` : '';
         successModal.classList.remove('hidden');
     } else {
         // --- FAILURE LOGIC ---
         remainingLives--;
-        
+
         if (remainingLives < 0) {
             remainingLives = 0; // Lock UI to 0
-            
+
             // Hardcore Penalties trigger
             const penalty = TOTAL_TILES * 25;
             globalScore = Math.max(0, globalScore - penalty);
             currentStreak = 0;
-            
+
             localStorage.setItem('captchaGlobalScore', globalScore);
             localStorage.setItem('captchaStreak', currentStreak);
             updateScoreUI();
-            
+
             // Visual error feedback
             scoreVal.style.color = 'var(--error-color)';
             streakVal.style.color = 'var(--error-color)';
@@ -269,9 +277,9 @@ function checkWin() {
             livesVal.style.color = '#fb923c';
             setTimeout(() => livesVal.style.color = '', 800);
         }
-        
+
         livesVal.innerText = remainingLives;
-        
+
         // Shake animation
         container.classList.remove('shake');
         // Trigger reflow to restart animation
@@ -324,7 +332,7 @@ function renderLeaderboardList(gridKey) {
                 <div class="leaderboard-name">${i + 1}. ${entry.name}</div>
                 <div class="leaderboard-detail" style="color: var(--text-secondary);">Skóre: ${entry.score} B</div>
             </div>
-            <div class="leaderboard-score" style="color: #4ade80; font-size: 18px;">${entry.time.toFixed(1)} s</div>
+            <div class="leaderboard-score" style="color: #4ade80; font-size: 18px;">${entry.time.toFixed(2)} s</div>
         </div>
     `).join('');
 }

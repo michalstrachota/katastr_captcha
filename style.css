@@ -67,6 +67,7 @@ body {
     font-size: 13px;
     font-weight: 600;
     color: var(--text-primary);
+    white-space: nowrap;
 }
 
 .score-display.timer-display {
@@ -243,14 +244,17 @@ button:active {
     flex: 1;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
     background: #1e1f2c;
     padding: 8px 12px;
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.05);
+
 }
 
 .stats-group {
     display: flex;
+    flex: 1;
     gap: 14px;
     align-items: center;
 }
@@ -413,53 +417,54 @@ input[type="text"]:focus {
 
 @media (min-width: 1024px) {
     .captcha-container {
-        max-width: min(700px, calc(100vh - 300px));
+        max-width: min(680px, calc(100vh - 360px));
     }
 
     .app-header-top h2 {
-        font-size: 16px;
-    }
-
-    .icon-btn {
-        font-size: 22px;
-        padding: 10px 14px;
-    }
-
-    .score-display {
         font-size: 15px;
     }
 
+    .icon-btn {
+        font-size: 20px;
+        padding: 9px 13px;
+    }
+
+    .score-display {
+        font-size: 13px;
+    }
+
     .score-display.timer-display {
-        font-size: 18px !important;
+        font-size: 15px !important;
     }
 
     .pb-text {
-        font-size: 12px;
+        font-size: 11px;
     }
 
     #difficulty-select {
-        font-size: 14px;
-        padding: 6px 10px;
+        font-size: 12px;
+        padding: 4px 8px;
     }
 
     button {
-        font-size: 18px;
-        padding: 12px 60px;
+        font-size: 16px;
+        padding: 10px 50px;
     }
 
     .stats-group {
-        gap: 24px;
+        gap: 16px;
     }
 }
 
 @media (min-width: 1600px) {
     .captcha-container {
-        max-width: min(850px, calc(100vh - 360px));
+        max-width: min(850px, calc(100vh - 400px));
     }
 
     .app-header-top {
         justify-content: center;
         gap: 40px;
+
     }
 
     .app-header-top h2 {
@@ -488,7 +493,6 @@ input[type="text"]:focus {
     #difficulty-select {
         font-size: 16px;
         padding: 8px 14px;
-        margin-left: 30px;
     }
 
     button {
@@ -504,18 +508,17 @@ input[type="text"]:focus {
 
     .stats-group {
         justify-content: center;
-        gap: 40px;
+        /*gap: 40px;*/
     }
 }
 
 /* 
- * The Ultimate Safety Net 
- * If the monitor is wide but extremely short (like a 1024x600 laptop), 
- * we forcibly compress ALL padding to guarantee the Hotovo button never falls off-screen.
+
+ * If the monitor is wide but extremely short
  */
 @media (max-height: 750px) {
     .captcha-container {
-        max-width: clamp(280px, calc(100vh - 250px), 500px) !important;
+        max-width: clamp(320px, calc(100vh - 220px), 600px) !important;
     }
 
     .app-header-top {
@@ -534,7 +537,7 @@ input[type="text"]:focus {
     }
 
     .header {
-        padding: 0 15px 10px 15px !important;
+        padding: 0 20px 10px 20px !important;
     }
 
     .game-settings {
@@ -545,7 +548,6 @@ input[type="text"]:focus {
     #difficulty-select {
         padding: 4px 8px !important;
         font-size: 13px !important;
-        margin-left: auto !important;
     }
 
     .score-display.timer-display {
@@ -554,6 +556,12 @@ input[type="text"]:focus {
 
     .footer {
         padding: 10px 15px !important;
+    }
+
+    .grid {
+        width: calc(100vh - 250px);
+        max-width: 100%;
+        align-self: center;
     }
 
     button {
